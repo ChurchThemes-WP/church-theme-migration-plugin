@@ -19,7 +19,7 @@ Things that are not migrated:
 
 ## Usage Instructions
 
-1. Install the plugin.
+1. Install [this plugin](https://github.com/UpThemes/church-theme-migration-plugin) as well as the [Church Theme Content plugin](https://wordpress.org/plugins/church-theme-content/).
 1. Navigate to Tools > ChurchThemes Migration.
 1. Click all the blue buttons first. 
 1. If needed, click the grey buttons.
