@@ -190,7 +190,7 @@ class Church_Theme_Content_Migration {
 		if( isset( $sermons_completed ) && $sermons_completed == true && isset( $sermon_tax_completed ) && $sermon_tax_completed == true && isset( $people_completed ) && $people_completed == true && isset( $people_tax_completed ) && $people_tax_completed == true && isset( $locations_completed ) && $locations_completed == true ){
 
 			echo '<style>#ct-warning{display: none;}</style>';
-			echo '<div style="margin-top: 20px; border-left: 3px solid green; font-size: 130%; padding: 40px; border-radius: 4px; background-color: white; line-height: 1.4"><h4 style="margin-top: 0;">' . __( 'Migration complete! Jesus may perform the best miracles, but this certainly qualifies as a spiritual gift.' ) . '</h4>' . sprintf( __( 'The last step is to <a href="https://upthemes.com/themes/uplifted/" target="_blank">install a beautiful new theme</a> (one that works with the Church Theme Content plugin), <a href="%s">disable this migration plugin</a>, and set up your homepage with the appropriate slides and widgets.' ), $this->change_plugin_state_url( 'deactivate', 'ctc_migration.php' ) ) . '</div>';
+			echo '<div style="margin-top: 20px; border-left: 3px solid green; font-size: 130%; padding: 40px; border-radius: 4px; background-color: white; line-height: 1.4"><h4 style="margin-top: 0;">' . __( 'Migration complete! Jesus may perform the best miracles, but this certainly qualifies as a spiritual gift.' ) . '</h4>' . sprintf( __( 'The last step is to <a href="https://upthemes.com/themes/uplifted/" target="_blank">install a beautiful new theme</a> (one that works with the Church Theme Content plugin), <a href="%s">disable this migration plugin</a>, and set up your homepage with the appropriate slides and widgets.' ), $this->change_plugin_state_url( 'deactivate', 'ct-migration.php' ) ) . '</div>';
 		}
 
 		echo '</div>';
@@ -532,7 +532,7 @@ class Church_Theme_Content_Migration {
 	function change_plugin_state_url( $action, $plugin ) {
 		// the plugin might be located in the plugin folder directly
 
-		if (strpos($plugin, '/')) {
+		if ( strpos($plugin, '/') ) {
 			$plugin = str_replace('/', '%2F', $plugin);
 		}
 
