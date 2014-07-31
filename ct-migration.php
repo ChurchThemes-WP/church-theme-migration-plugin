@@ -538,14 +538,14 @@ class Church_Theme_Content_Migration {
 
 		if( $action == 'activate' ){
 
-			$actionUrl = sprintf(admin_url('plugins.php?action=activate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
+			$actionUrl = sprintf(network_admin_url('plugins.php?action=activate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
 			// change the plugin request to the plugin to pass the nonce check
 			$_REQUEST['plugin'] = $plugin;
 			$actionUrl = wp_nonce_url($actionUrl, 'activate-plugin_' . $plugin);
 
 		} else if ( $action == 'deactivate' ){
 
-			$actionUrl = sprintf(admin_url('plugins.php?action=deactivate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
+			$actionUrl = sprintf(network_admin_url('plugins.php?action=deactivate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
 			// change the plugin request to the plugin to pass the nonce check
 			$_REQUEST['plugin'] = $plugin;
 			$actionUrl = wp_nonce_url($actionUrl, 'deactivate-plugin_' . $plugin);
