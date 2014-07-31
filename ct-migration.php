@@ -91,7 +91,11 @@ class Church_Theme_Content_Migration {
 	 */
 	public function display_admin_page() {
 
-		echo '<h1>' . __( 'ChurchThemes.net Migration' ) . '</h1>';
+		echo '<div class="wrap">';
+
+		echo '<h2>' . __( 'ChurchThemes.net Migration' ) . '</h2>';
+
+		echo '<div id="ct-warning" class="error"><p>' . __( '<strong>WARNING</strong> Always perform a backup of your database before you make any major changes like this. We recommend using <a href="https://wordpress.org/plugins/backupwordpress/">BackUpWordPress</a>.' ) . '</p></div>';
 
 		/**
 		 * Migrate Sermons
@@ -105,20 +109,22 @@ class Church_Theme_Content_Migration {
 
 		$taxonomy_terms = get_terms( array( 'sermon_speaker', 'sermon_topic', 'sermon_series' ) );
 
-		echo '<h3>' . __( 'Migrate Sermons' ) . '</h3>';
+		echo '<hr><h3>' . __( 'Migrate Sermons' ) . '</h3>';
 
-		if( is_array( $posts ) && ! count( $posts ) === 0 && is_array( $taxonomy_terms ) && ! count( $taxonomy_terms ) === 0 ){
+		if( count( $posts ) > 0 ){
 			echo '<div class="updated" style="margin: 0 0 22px;"><p>' . __( '<strong>PLEASE NOTE:</strong> The new sermon manager does not use "podcast" or "services" so these taxonomies will not be migrated.' ) . '</p></div>';
-			echo '<p>' . __( 'Click the buttons below to migrate your sermon content to the new format.' ) . '</p>';
+			echo '<p>' . __( 'Migrate your sermon content to the new format.' ) . '</p>';
 		}
 
-		if( is_array( $posts ) && count( $posts ) === 0 ){
+		if( count( $posts ) === 0 ){
+			$sermons_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Sermon Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermons' => '1', 'migrate_sermon_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All Sermons' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermons' => '1', 'migrate_sermon_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All Sermons &amp; Taxonomies' ) . '</a></p>';
 		}
 
-		if( is_array( $taxonomy_terms ) && count( $taxonomy_terms ) === 0 ){
+		if( count( $taxonomy_terms ) === 0 ){
+			$sermon_tax_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Sermon Taxonomy Migration Complete') . '</div>';
 		} else {
 			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermon_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate Sermon Taxonomies' ) . '</a></p>';
@@ -136,20 +142,22 @@ class Church_Theme_Content_Migration {
 
 		$ppl_cat_taxonomy_terms = get_terms( array( 'person_category' ) );
 
-		echo '<h3>' . __( 'Migrate People' ) . '</h3>';
+		echo '<hr><h3>' . __( 'Migrate People' ) . '</h3>';
 
-		if( is_array( $posts ) && ! count( $posts ) === 0 && is_array( $ppl_cat_taxonomy_terms ) && ! count( $ppl_cat_taxonomy_terms ) === 0 ){
+		if( count( $posts ) > 0 ){
 			echo '<div class="updated" style="margin: 0 0 22px;"><p>' . __( '<strong>PLEASE NOTE:</strong> we do not use "person tags" with the new framework. This taxonomy will not be migrated.' ) . '</p></div>';
-			echo '<p>' . __( 'Click the buttons below to migrate your staff profiles to the new format.' ) . '</p>';
+			echo '<p>' . __( 'Migrate your staff profiles to the new format.' ) . '</p>';
 		}
 
-		if( is_array( $posts ) && count( $posts ) === 0 ){
+		if( ! count( $posts ) ){
+			$people_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people' => '1', 'migrate_people_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All People' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people' => '1', 'migrate_people_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All People &amp; Taxonomies' ) . '</a></p>';
 		}
 
 		if( is_array( $ppl_cat_taxonomy_terms ) && count( $ppl_cat_taxonomy_terms ) === 0 ){
+			$people_tax_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Taxonomy Migration Complete') . '</div>';
 		} else {
 			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate People Taxonomies' ) . '</a></p>';
@@ -165,18 +173,28 @@ class Church_Theme_Content_Migration {
 			'post_status'	=> 'all'
 		) );
 
-		echo '<h3>' . __( 'Migrate Locations' ) . '</h3>';
+		echo '<hr><h3>' . __( 'Migrate Locations' ) . '</h3>';
 
-		if( is_array( $posts ) && ! count( $posts ) === 0 ){
+		if( count( $posts ) ){
 			echo '<div class="updated" style="margin: 0 0 22px;"><p>' . __( '<strong>PLEASE NOTE:</strong> we do not use "person tags" with the new framework. This taxonomy will not be migrated.' ) . '</p></div>';
-			echo '<p>' . __( 'this migration tool simply converts each location to the new post type, you will need to add your own maps/directions and additional data.' ) . '</p>';
+			echo '<p>' . __( 'This migration tool simply converts each location to the new post type, you will need to add your own maps/directions and additional data.' ) . '</p>';
 		}
 
-		if( is_array( $posts ) && count( $posts ) === 0 ){
+		if( ! count( $posts ) ){
+			$locations_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Location Migration Complete') . '</div>';
 		} else {
 			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_locations' => '1', 'migrate_locations_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All Locations' ) . '</a></p>';
 		}
+
+		if( isset( $sermons_completed ) && $sermons_completed == true && isset( $sermon_tax_completed ) && $sermon_tax_completed == true && isset( $people_completed ) && $people_completed == true && isset( $people_tax_completed ) && $people_tax_completed == true && isset( $locations_completed ) && $locations_completed == true ){
+
+			echo '<style>#ct-warning{display: none;}</style>';
+			echo '<div style="margin-top: 20px; border-left: 3px solid green; font-size: 130%; padding: 40px; border-radius: 4px; background-color: white; line-height: 1.4"><h4 style="margin-top: 0;">' . __( 'Migration complete! Jesus may perform the best miracles, but this certainly qualifies as a spiritual gift.' ) . '</h4>' . sprintf( __( 'The last step is to <a href="https://upthemes.com/themes/uplifted/" target="_blank">install a beautiful new theme</a> (one that works with the Church Theme Content plugin), <a href="%s">disable this migration plugin</a>, and set up your homepage with the appropriate slides and widgets.' ), $this->change_plugin_state_url( 'deactivate', 'ctc_migration.php' ) ) . '</div>';
+		}
+
+		echo '</div>';
+
 	}
 
 	/**
@@ -501,6 +519,40 @@ class Church_Theme_Content_Migration {
 		delete_option( "{$new_tax}_children" );
 
 		return true;
+	}
+
+	/**
+	 * Generate an activation/deactivation/update URL for a plugin.
+	 *
+	 * @param  string 	$action 	activate || deactivate || update
+	 * @param  string 	$plugin 	A plugin-folder/plugin-main-file.php path (e.g. "my-plugin/my-plugin.php")
+	 *
+	 * @return string 	$actionUrl 	The plugin activation url
+	 */
+	function change_plugin_state_url( $action, $plugin ) {
+		// the plugin might be located in the plugin folder directly
+
+		if (strpos($plugin, '/')) {
+			$plugin = str_replace('/', '%2F', $plugin);
+		}
+
+		if( $action == 'activate' ){
+
+			$actionUrl = sprintf(admin_url('plugins.php?action=activate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
+			// change the plugin request to the plugin to pass the nonce check
+			$_REQUEST['plugin'] = $plugin;
+			$actionUrl = wp_nonce_url($actionUrl, 'activate-plugin_' . $plugin);
+
+		} else if ( $action == 'deactivate' ){
+
+			$actionUrl = sprintf(admin_url('plugins.php?action=deactivate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
+			// change the plugin request to the plugin to pass the nonce check
+			$_REQUEST['plugin'] = $plugin;
+			$actionUrl = wp_nonce_url($actionUrl, 'deactivate-plugin_' . $plugin);
+
+		}
+
+		return $actionUrl;
 	}
 }
 
