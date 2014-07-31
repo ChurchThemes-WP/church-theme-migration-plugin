@@ -46,12 +46,29 @@ class Church_Theme_Content_Migration {
 
 		}
 
-		if( isset( $_GET[ 'migrate_tax' ] ) && $_GET[ 'migrate_tax' ] == true ){
+		if( isset( $_GET[ 'migrate_sermon_tax' ] ) && $_GET[ 'migrate_sermon_tax' ] == true ){
 
 			add_action( 'admin_init', array( &$this, 'migrate_sermon_taxonomy_terms' ) );
 
 		}
 
+		if( isset( $_GET[ 'migrate_people' ] ) && $_GET[ 'migrate_people' ] == true ){
+
+			add_action( 'admin_init', array( &$this, 'migrate_people' ) );
+
+		}
+
+		if( isset( $_GET[ 'migrate_people_tax' ] ) && $_GET[ 'migrate_people_tax' ] == true ){
+
+			add_action( 'admin_init', array( &$this, 'migrate_people_taxonomy_terms' ) );
+
+		}
+
+		if( isset( $_GET[ 'migrate_locations' ] ) && $_GET[ 'migrate_locations' ] == true ){
+
+			add_action( 'admin_init', array( &$this, 'migrate_locations' ) );
+
+		}
 	}
 
 	/**
@@ -76,29 +93,90 @@ class Church_Theme_Content_Migration {
 
 		echo '<h1>' . __( 'ChurchThemes.net Migration' ) . '</h1>';
 
+		/**
+		 * Migrate Sermons
+		 */
+
 		$posts = get_posts( array(
 			'posts_per_page'=> $this->posts_per_page,
 			'post_type' 	=> 'ct_sermon',
+			'post_status'	=> 'all'
 		) );
+
+		$taxonomy_terms = get_terms( array( 'sermon_speaker', 'sermon_topic', 'sermon_series' ) );
 
 		echo '<h3>' . __( 'Migrate Sermons' ) . '</h3>';
 
-		echo '<p>' . __( 'Click the buttons below to migrate your sermon content to the new format. PLEASE NOTE: The new sermon manager does not use "podcast" or "services" so these taxonomies will not be migrated.' ) . '</p>';
+		if( is_array( $posts ) && ! count( $posts ) === 0 && is_array( $taxonomy_terms ) && ! count( $taxonomy_terms ) === 0 ){
+			echo '<div class="updated" style="margin: 0 0 22px;"><p>' . __( '<strong>PLEASE NOTE:</strong> The new sermon manager does not use "podcast" or "services" so these taxonomies will not be migrated.' ) . '</p></div>';
+			echo '<p>' . __( 'Click the buttons below to migrate your sermon content to the new format.' ) . '</p>';
+		}
 
 		if( is_array( $posts ) && count( $posts ) === 0 ){
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Sermon Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermons' => '1', 'migrate_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate Sermons' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermons' => '1', 'migrate_sermon_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All Sermons' ) . '</a></p>';
 		}
-
-		$taxonomy_terms = get_terms( array( 'sermon_speaker', 'sermon_topic', 'sermon_series' ) );
 
 		if( is_array( $taxonomy_terms ) && count( $taxonomy_terms ) === 0 ){
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Sermon Taxonomy Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate Sermon Taxonomies' ) . '</a></p>';
+			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermon_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate Sermon Taxonomies' ) . '</a></p>';
 		}
 
+		/**
+		 * Migrate People
+		 */
+
+		$posts = get_posts( array(
+			'posts_per_page'=> $this->posts_per_page,
+			'post_type' 	=> 'ct_person',
+			'post_status'	=> 'all'
+		) );
+
+		$ppl_cat_taxonomy_terms = get_terms( array( 'person_category' ) );
+
+		echo '<h3>' . __( 'Migrate People' ) . '</h3>';
+
+		if( is_array( $posts ) && ! count( $posts ) === 0 && is_array( $ppl_cat_taxonomy_terms ) && ! count( $ppl_cat_taxonomy_terms ) === 0 ){
+			echo '<div class="updated" style="margin: 0 0 22px;"><p>' . __( '<strong>PLEASE NOTE:</strong> we do not use "person tags" with the new framework. This taxonomy will not be migrated.' ) . '</p></div>';
+			echo '<p>' . __( 'Click the buttons below to migrate your staff profiles to the new format.' ) . '</p>';
+		}
+
+		if( is_array( $posts ) && count( $posts ) === 0 ){
+			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Migration Complete') . '</div>';
+		} else {
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people' => '1', 'migrate_people_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All People' ) . '</a></p>';
+		}
+
+		if( is_array( $ppl_cat_taxonomy_terms ) && count( $ppl_cat_taxonomy_terms ) === 0 ){
+			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Taxonomy Migration Complete') . '</div>';
+		} else {
+			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate People Taxonomies' ) . '</a></p>';
+		}
+
+		/**
+		 * Migrate Locations
+		 */
+
+		$posts = get_posts( array(
+			'posts_per_page'=> $this->posts_per_page,
+			'post_type' 	=> 'ct_location',
+			'post_status'	=> 'all'
+		) );
+
+		echo '<h3>' . __( 'Migrate Locations' ) . '</h3>';
+
+		if( is_array( $posts ) && ! count( $posts ) === 0 ){
+			echo '<div class="updated" style="margin: 0 0 22px;"><p>' . __( '<strong>PLEASE NOTE:</strong> we do not use "person tags" with the new framework. This taxonomy will not be migrated.' ) . '</p></div>';
+			echo '<p>' . __( 'this migration tool simply converts each location to the new post type, you will need to add your own maps/directions and additional data.' ) . '</p>';
+		}
+
+		if( is_array( $posts ) && count( $posts ) === 0 ){
+			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Location Migration Complete') . '</div>';
+		} else {
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_locations' => '1', 'migrate_locations_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All Locations' ) . '</a></p>';
+		}
 	}
 
 	/**
@@ -114,6 +192,7 @@ class Church_Theme_Content_Migration {
 			$posts = get_posts( array(
 				'posts_per_page'=> $this->posts_per_page,
 				'post_type' 	=> 'ct_sermon',
+				'post_status'	=> 'all'
 			) );
 
 			if( $posts && is_array( $posts ) ){
@@ -125,7 +204,13 @@ class Church_Theme_Content_Migration {
 						'post_type' => 'ctc_sermon',
 					) );
 
-					if ( $sermon_video === ( get_post_meta($post->ID, '_ct_sm_video_file', true) || get_post_meta( $post->ID , '_ct_sm_video_embed' , true ) ) ) {
+					$sermon_video = get_post_meta($post->ID, '_ct_sm_video_file', true);
+
+					if( ! $sermon_video ) {
+						$sermon_video = get_post_meta( $post->ID , '_ct_sm_video_embed' , true );
+					}
+
+					if ( $sermon_video ) {
 						$updated_sermon_video = add_post_meta( $post->ID , '_ctc_sermon_video' , $sermon_video );
 
 						if( $updated_sermon_video ){
@@ -134,7 +219,9 @@ class Church_Theme_Content_Migration {
 						}
 					}
 
-					if ( $sermon_audio === get_post_meta( $post->ID , '_ct_sm_audio_file' , true ) ) {
+					$sermon_audio = get_post_meta( $post->ID , '_ct_sm_audio_file' , true );
+
+					if ( $sermon_audio ) {
 						$updated_sermon_audio = add_post_meta( $post->ID , '_ctc_sermon_audio' , $sermon_audio );
 
 						if( $updated_sermon_audio ){
@@ -142,19 +229,17 @@ class Church_Theme_Content_Migration {
 						}
 					}
 
-					if ( $sermon_pdf === get_post_meta( $post->ID , '_ctc_sermon_pdf' , true ) ) {
+					$sermon_pdf = get_post_meta( $post->ID , '_ct_sm_sg_file' , true );
+
+					if ( $sermon_pdf ) {
 						$updated_sermon_pdf = add_post_meta( $post->ID , '_ctc_sermon_pdf' , $sermon_pdf );
 
 						if( $updated_sermon_pdf ){
-							delete_post_meta( $post->ID , '_ctc_sermon_pdf' );
+							delete_post_meta( $post->ID , '_ct_sm_sg_file' );
 						}
 					}
-
-					add_action('admin_notices',function(){ echo '<div class="updated"><p>' . printf( __( 'Updated sermon #%s' ), $update->post_id ) . '</p></div>'; });
 				}
 			}
-
-			migrate_sermon_taxonomy_terms();
 		}
 	}
 
@@ -184,6 +269,157 @@ class Church_Theme_Content_Migration {
 			add_action('admin_notices',function(){ echo '<div class="updated"><p>' . __('Sermon series migration complete.') . '</p></div>'; });
 		}
 
+	}
+
+	/**
+	 * Migrate people
+	 *
+	 * @since 0.1
+	 * @access public
+	 */
+	public function migrate_people(){
+
+		if( isset( $_GET[ 'migrate_people' ] ) && $_GET[ 'migrate_people' ] == true ){
+
+			$posts = get_posts( array(
+				'posts_per_page'=> $this->posts_per_page,
+				'post_type' 	=> 'ct_person',
+				'post_status'	=> 'all'
+			) );
+
+			if( $posts && is_array( $posts ) ){
+
+				foreach( $posts as $post){
+
+					$update = wp_update_post( array(
+						'ID'		=> $post->ID,
+						'post_type' => 'ctc_person',
+					) );
+
+					$person_role = get_post_meta($post->ID, '_ct_ppl_role', true);
+
+					if ( $person_role ) {
+						$updated_person_role = add_post_meta( $post->ID , '_ctc_person_position' , $person_role );
+
+						if( $updated_person_role ){
+							delete_post_meta( $post->ID , '_ct_ppl_role' );
+						}
+					}
+
+					$person_email = get_post_meta($post->ID, '_ct_ppl_emailaddress', true);
+
+					if ( $person_email ) {
+						$updated_person_email = add_post_meta( $post->ID , '_ctc_person_email' , $person_email );
+
+						if( $updated_person_email ){
+							delete_post_meta( $post->ID , '_ct_ppl_emailaddress' );
+						}
+					}
+
+					$person_phone = get_post_meta($post->ID, '_ct_ppl_phonenum1', true);
+
+					if ( $person_phone ) {
+						$updated_person_phone = add_post_meta( $post->ID , '_ctc_person_phone' , $person_phone );
+
+						if( $updated_person_phone ){
+							delete_post_meta( $post->ID , '_ct_ppl_phonenum1' );
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Migrate people taxonomies
+	 *
+	 * @since 0.1
+	 * @access public
+	 */
+	public function migrate_people_taxonomy_terms(){
+
+		$person_categories_migrated = $this->migrate_taxonomy_terms( 'person_category', 'ctc_person_group' );
+
+		if( isset( $person_categories_migrated ) && $person_categories_migrated ){
+			add_action('admin_notices',function(){ echo '<div class="updated"><p>' . __('Person category to groups migration complete.') . '</p></div>'; });
+		}
+
+	}
+
+
+	/**
+	 * Migrate people
+	 *
+	 * @since 0.1
+	 * @access public
+	 */
+	public function migrate_locations(){
+
+		if( isset( $_GET[ 'migrate_locations' ] ) && $_GET[ 'migrate_locations' ] == true ){
+
+			$posts = get_posts( array(
+				'posts_per_page'=> $this->posts_per_page,
+				'post_type' 	=> 'ct_location',
+				'post_status'	=> 'all'
+			) );
+
+			if( $posts && is_array( $posts ) ){
+
+				foreach( $posts as $post){
+
+					$update = wp_update_post( array(
+						'ID'		=> $post->ID,
+						'post_type' => 'ctc_location',
+					) );
+
+					$location_address = get_post_meta($post->ID, '_ct_loc_address1', true) . "\n" . get_post_meta($post->ID, '_ct_loc_address2', true) . "\n" . get_post_meta($post->ID, '_ct_loc_address3', true);
+
+					if ( $location_address ) {
+						$updated_location_address = add_post_meta( $post->ID , '_ctc_location_address' , $location_address );
+
+						if( $updated_location_address ){
+							delete_post_meta( $post->ID , '_ct_loc_address1' );
+							delete_post_meta( $post->ID , '_ct_loc_address2' );
+							delete_post_meta( $post->ID , '_ct_loc_address3' );
+						}
+					}
+
+					$location_service_times = get_post_meta($post->ID, '_ct_loc_service1', true);
+
+					if( get_post_meta($post->ID, '_ct_loc_service2', true) ){
+						$location_service_times .= ', ' . get_post_meta($post->ID, '_ct_loc_service2', true);
+					}
+
+					if( get_post_meta($post->ID, '_ct_loc_service3', true) ){
+						$location_service_times .= ', ' . get_post_meta($post->ID, '_ct_loc_service3', true);
+					}
+
+					if( get_post_meta($post->ID, '_ct_loc_service4', true) ){
+						$location_service_times .= ', ' . get_post_meta($post->ID, '_ct_loc_service4', true);
+					}
+
+					if( get_post_meta($post->ID, '_ct_loc_service5', true) ){
+						$location_service_times .= ', ' . get_post_meta($post->ID, '_ct_loc_service5', true);
+					}
+
+					if ( $location_service_times ) {
+						$updated_location_service_times = add_post_meta( $post->ID , '_ctc_location_times' , $location_service_times );
+
+						if( $updated_location_service_times ){
+							delete_post_meta( $post->ID , '_ct_loc_service1' );
+							delete_post_meta( $post->ID , '_ct_loc_service2' );
+							delete_post_meta( $post->ID , '_ct_loc_service3' );
+							delete_post_meta( $post->ID , '_ct_loc_service4' );
+							delete_post_meta( $post->ID , '_ct_loc_service5' );
+						}
+					}
+
+
+
+
+				}
+			}
+		}
 	}
 
 	/**
