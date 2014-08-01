@@ -120,14 +120,14 @@ class Church_Theme_Content_Migration {
 			$sermons_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Sermon Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermons' => '1', 'migrate_sermon_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All Sermons &amp; Taxonomies' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermons' => '1', 'migrate_sermon_tax' => '1' ), admin_url( 'tools.php?ct-migration=1' ) ) ) . '">' . __( 'Migrate All Sermons &amp; Taxonomies' ) . '</a></p>';
 		}
 
 		if( count( $taxonomy_terms ) === 0 ){
 			$sermon_tax_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Sermon Taxonomy Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermon_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate Sermon Taxonomies' ) . '</a></p>';
+			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_sermon_tax' => '1' ), admin_url( 'tools.php?ct-migration=1' ) ) ) . '">' . __( 'Migrate Sermon Taxonomies' ) . '</a></p>';
 		}
 
 		/**
@@ -153,14 +153,14 @@ class Church_Theme_Content_Migration {
 			$people_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people' => '1', 'migrate_people_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All People &amp; Taxonomies' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people' => '1', 'migrate_people_tax' => '1' ), admin_url( 'tools.php?ct-migration=1' ) ) ) . '">' . __( 'Migrate All People &amp; Taxonomies' ) . '</a></p>';
 		}
 
 		if( is_array( $ppl_cat_taxonomy_terms ) && count( $ppl_cat_taxonomy_terms ) === 0 ){
 			$people_tax_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Taxonomy Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate People Taxonomies' ) . '</a></p>';
+			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people_tax' => '1' ), admin_url( 'tools.php?ct-migration=1' ) ) ) . '">' . __( 'Migrate People Taxonomies' ) . '</a></p>';
 		}
 
 		/**
@@ -184,7 +184,7 @@ class Church_Theme_Content_Migration {
 			$locations_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'Location Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_locations' => '1', 'migrate_locations_tax' => '1' ), $_SERVER[ 'PHP_SELF' ] ) ) . '">' . __( 'Migrate All Locations' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_locations' => '1', 'migrate_locations_tax' => '1' ), admin_url( 'tools.php?ct-migration=1' ) ) ) . '">' . __( 'Migrate All Locations' ) . '</a></p>';
 		}
 
 		if( isset( $sermons_completed ) && $sermons_completed == true && isset( $sermon_tax_completed ) && $sermon_tax_completed == true && isset( $people_completed ) && $people_completed == true && isset( $people_tax_completed ) && $people_tax_completed == true && isset( $locations_completed ) && $locations_completed == true ){
