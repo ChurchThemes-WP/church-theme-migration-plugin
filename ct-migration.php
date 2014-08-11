@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: ChurchThemes.net Content Migration Plugin
-Plugin URI: http://churchthemes.net/plugins/content-migration/
+Plugin URI: https://churchthemes.net/plugins/content-migration/
 Description: This plugin allows users to migrate from the old ChurchThemes.net themes to be able to use the Church Theme Content plugin.
 Author: Chris Wallace
-Version: 1.0
-Author URI: http://churchthemes.net
+Version: 1.0.1
+Author URI: https://churchthemes.net
 */
 
 
@@ -79,7 +79,7 @@ class Church_Theme_Content_Migration {
 	 */
 	public function hook_admin_page() {
 
-		add_management_page( 'ChurchThemes Migration', 'ChurchThemes Migration', 'manage_options', 'ct-migration', array( &$this,'display_admin_page') );
+		add_management_page( 'ChurchThemes Migration', 'ChurchThemes Migration', 'edit_post', 'ct-migration', array( &$this,'display_admin_page') );
 
 	}
 
@@ -153,14 +153,14 @@ class Church_Theme_Content_Migration {
 			$people_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people' => '1', 'migrate_people_tax' => '1' ), admin_url( 'tools.php?ct-migration=1' ) ) ) . '">' . __( 'Migrate All People &amp; Taxonomies' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people' => '1', 'migrate_people_tax' => '1', 'ct-migration' => '1' ), admin_url( 'tools.php' ) ) ) . '">' . __( 'Migrate All People &amp; Taxonomies' ) . '</a></p>';
 		}
 
 		if( is_array( $ppl_cat_taxonomy_terms ) && count( $ppl_cat_taxonomy_terms ) === 0 ){
 			$people_tax_completed = true;
 			echo '<div class="completed"><i class="dashicons dashicons-yes" style="color: green;"></i> ' . __( 'People Taxonomy Migration Complete') . '</div>';
 		} else {
-			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people_tax' => '1' ), admin_url( 'tools.php?ct-migration=1' ) ) ) . '">' . __( 'Migrate People Taxonomies' ) . '</a></p>';
+			echo '<p><a class="button button-secondary" href="' . esc_url( add_query_arg( array( 'page' => 'ct-migration', 'migrate_people_tax' => '1', 'ct-migration' => '1' ), admin_url( 'tools.php' ) ) ) . '">' . __( 'Migrate People Taxonomies' ) . '</a></p>';
 		}
 
 		/**
@@ -272,21 +272,33 @@ class Church_Theme_Content_Migration {
 		$speakers_migrated = $this->migrate_taxonomy_terms( 'sermon_speaker', 'ctc_sermon_speaker' );
 
 		if( isset( $speakers_migrated ) && $speakers_migrated ){
-			add_action('admin_notices',function(){ echo '<div class="updated"><p>' . __('Sermon speakers migration complete.') . '</p></div>'; });
+			add_action('admin_notices', array( &$this, 'sermon_migration_complete' ) );
 		}
 
 		$topics_migrated = $this->migrate_taxonomy_terms( 'sermon_topic', 'ctc_sermon_topic' );
 
 		if( isset( $topics_migrated ) && $topics_migrated ){
-			add_action('admin_notices',function(){ echo '<div class="updated"><p>' . __('Sermon topic migration complete.') . '</p></div>'; });
+			add_action('admin_notices', array( &$this, 'sermon_topic_migration_complete' ) );
 		}
 
 		$series_migrated = $this->migrate_taxonomy_terms( 'sermon_series', 'ctc_sermon_series' );
 
 		if( isset( $series_migrated ) && $series_migrated ){
-			add_action('admin_notices',function(){ echo '<div class="updated"><p>' . __('Sermon series migration complete.') . '</p></div>'; });
+			add_action('admin_notices', array( &$this, 'sermon_series_migration_complete' ) );
 		}
 
+	}
+
+	function sermon_migration_complete(){
+		echo '<div class="updated"><p>' . __('Sermon speakers migration complete.') . '</p></div>';
+	}
+
+	function sermon_topic_migration_complete(){
+		echo '<div class="updated"><p>' . __('Sermon topic migration complete.') . '</p></div>';
+	}
+
+	function sermon_series_migration_complete(){
+		echo '<div class="updated"><p>' . __('Sermon series migration complete.') . '</p></div>';
 	}
 
 	/**
@@ -359,11 +371,14 @@ class Church_Theme_Content_Migration {
 		$person_categories_migrated = $this->migrate_taxonomy_terms( 'person_category', 'ctc_person_group' );
 
 		if( isset( $person_categories_migrated ) && $person_categories_migrated ){
-			add_action('admin_notices',function(){ echo '<div class="updated"><p>' . __('Person category to groups migration complete.') . '</p></div>'; });
+			add_action('admin_notices', array( &$this, 'person_category_migration_complete' ) );
 		}
 
 	}
 
+	function person_category_migration_complete(){
+		echo '<div class="updated"><p>' . __('Person category to groups migration complete.') . '</p></div>';
+	}
 
 	/**
 	 * Migrate people
@@ -467,9 +482,13 @@ class Church_Theme_Content_Migration {
 			}
 
 		} else {
-			add_action('admin_notices',function(){ echo '<div class="error"><p>' . __('Taxonomy does not exist. Please ensure the Church Theme Content plugin is installed and activated and your ChurchThemes.net theme is enabled.') . '</p></div>'; });
+			add_action( 'admin_notices', array( &$this, 'taxonomy_error' ) );
 		}
 
+	}
+
+	function taxonomy_error(){
+		echo '<div class="error"><p>' . __('Taxonomy does not exist. Please ensure the Church Theme Content plugin is installed and activated and your ChurchThemes.net theme is enabled.') . '</p></div>';
 	}
 
 	static function handle_change_tax( $term_ids, $old_taxonomy, $new_taxonomy ) {
@@ -538,14 +557,14 @@ class Church_Theme_Content_Migration {
 
 		if( $action == 'activate' ){
 
-			$actionUrl = sprintf(network_admin_url('plugins.php?action=activate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
+			$actionUrl = sprintf(admin_url('plugins.php?action=activate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
 			// change the plugin request to the plugin to pass the nonce check
 			$_REQUEST['plugin'] = $plugin;
 			$actionUrl = wp_nonce_url($actionUrl, 'activate-plugin_' . $plugin);
 
 		} else if ( $action == 'deactivate' ){
 
-			$actionUrl = sprintf(network_admin_url('plugins.php?action=deactivate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
+			$actionUrl = sprintf(admin_url('plugins.php?action=deactivate&plugin=%s&plugin_status=all&paged=1&s'), $plugin);
 			// change the plugin request to the plugin to pass the nonce check
 			$_REQUEST['plugin'] = $plugin;
 			$actionUrl = wp_nonce_url($actionUrl, 'deactivate-plugin_' . $plugin);
