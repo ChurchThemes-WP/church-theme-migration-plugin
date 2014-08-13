@@ -24,3 +24,12 @@ Things that are not migrated:
 1. Click all the blue buttons first. 
 1. If needed, click the grey buttons.
 1. If the process timed out, try clicking the blue button again. (some shared servers are underpowered and may exceed the maximum execution time, so you may have to click the buttons again to migrate everything, but have no fear, you won't lose any data if you have to do it again.)
+
+## Content Migration Instructions
+
+1. Create a new page called ‘Home’ (and select the ‘Homepage' page template) and one called ‘Blog’ (select the ‘Blog’ page template)
+1. Edit the contents of the 'Home' page, as this will appear as your welcome message on your homepage.
+1. Go to 'Settings > Reading’ and set the front page as ‘Home' and posts page as ‘Blog’ like this: [screenshot] (https://www.evernote.com/shard/s3/sh/9b0f40d9-a0db-4095-9d74-3bb6baee03d1/4fd721f5cbd049e4bcd9f271895eaf8a/deep/0/Reading-Settings---Trinity---WordPress.png)
+1. Set up all your widget areas from either the ‘Appearance > Widgets’ area or using the Customizer
+1. Go to “Appearance > Menu,” select your main menu and click ‘Select’ then scroll down and check the box to add it to the “Right Top Menu.”
+1. Keep in mind you will have to manually migrate content such as slides, events, widgets, and menus.
