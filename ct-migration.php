@@ -79,7 +79,7 @@ class Church_Theme_Content_Migration {
 	 */
 	public function hook_admin_page() {
 
-		add_management_page( 'ChurchThemes Migration', 'ChurchThemes Migration', 'edit_post', 'ct-migration', array( &$this,'display_admin_page') );
+		add_management_page( 'ChurchThemes Migration', 'ChurchThemes Migration', 'edit_posts', 'ct-migration', array( &$this,'display_admin_page') );
 
 	}
 
